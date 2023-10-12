@@ -1,28 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DiscordWatchdog
 {
     internal class AppTray
     {
-        private NotifyIcon _notifyIcon;
+        readonly NotifyIcon _notifyIcon;
         private bool _enabled = true;
 
-        public Action<bool> Tray_OnEnabledChanged { get; set; }
-        public Action Tray_OnExit { get; set; }
+        public Action<bool>? Tray_OnEnabledChanged { get; set; }
+        public Action? Tray_OnExit { get; set; }
 
         public AppTray()
         {
-            ContextMenuStrip contextMenu = new ContextMenuStrip();
-            contextMenu.Visible = true;
-            contextMenu.Enabled = true;
+            ContextMenuStrip contextMenu = new()
+            {
+                Visible = true,
+                Enabled = true
+            };
             contextMenu.Items.Add("Turn off", null, Tray_ToggleOnOffOnClick);
             contextMenu.Items.Add("Exit", null, Tray_Exit);
 
-            NotifyIcon notifyIcon = new NotifyIcon()
+            NotifyIcon notifyIcon = new()
             {
                 Icon = Images.DiscordWatchDogTrayIcon,
                 Text = "Discord Watchdog",
@@ -32,7 +31,7 @@ namespace DiscordWatchdog
             _notifyIcon = notifyIcon;
         }
 
-        private void Tray_ToggleOnOffOnClick(object sender, EventArgs e)
+        private void Tray_ToggleOnOffOnClick(object? sender, EventArgs e)
         {
             if (_enabled)
             {
@@ -48,8 +47,8 @@ namespace DiscordWatchdog
             _enabled = true;
             Tray_OnEnabledChanged?.Invoke(_enabled);
         }
-        
-        private void Tray_Exit(object sender, EventArgs e)
+
+        private void Tray_Exit(object? sender, EventArgs e)
         {
             Tray_OnExit?.Invoke();
         }

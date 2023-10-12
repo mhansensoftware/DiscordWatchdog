@@ -1,14 +1,11 @@
 ﻿using DiscordWatchdog;
 using DiscordWatchdog.Checks;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Threading;
 using Vanara.PInvoke;
 
 internal class Program
 {
-    private static Task backGroundTask;
-    private static CancellationTokenSource cancellationTokenSource;
+    private static Task? backGroundTask;
+    private static CancellationTokenSource? cancellationTokenSource;
 
     [STAThread]
     private static void Main(string[] args)
@@ -17,16 +14,17 @@ internal class Program
         {
             cancellationTokenSource = new CancellationTokenSource();
 
-            DiscordPathGetter discordPathGetter = new DiscordPathGetter();
-            Watchdog watchdog = new Watchdog(discordPathGetter);
-            AppTray appTray = new AppTray();
+            DiscordPathGetter discordPathGetter = new();
+            Watchdog watchdog = new(discordPathGetter);
+            AppTray appTray = new();
             appTray.Tray_OnEnabledChanged += value => watchdog.Enabled = value;
             appTray.Tray_OnExit += AppTray_Exit;
 
-            backGroundTask = new Task(() => {
+            backGroundTask = new Task(() =>
+            {
                 while (true)
                 {
-                    DiscordPresenseChecker.Check(discordPathGetter);
+                    DiscordPresenceChecker.Check(discordPathGetter);
                     watchdog.Tick();
 
                     Task.Delay(1000).Wait();
@@ -39,13 +37,13 @@ internal class Program
         }
         catch (ExitException)
         {
-            cancellationTokenSource.Cancel();   
+            cancellationTokenSource?.Cancel();
             Application.Exit();
             return;
         }
         catch (Exception ex)
         {
-            User32.MB_RESULT result = User32.MessageBox(HWND.NULL, ex.Message + "\nTry again?", "Error", User32.MB_FLAGS.MB_YESNO | User32.MB_FLAGS.MB_ICONERROR);
+            User32.MB_RESULT result = User32.MessageBox(HWND.NULL, $"{ex.Message}\nTry again?", "Error", User32.MB_FLAGS.MB_YESNO | User32.MB_FLAGS.MB_ICONERROR);
             switch (result)
             {
                 case User32.MB_RESULT.IDYES:

@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace DiscordWatchdog
 {
     internal class Watchdog
     {
 
-        bool wasDiscordOpen = false;
-        DiscordPathGetter getter;
+        private bool wasDiscordOpen;
+        private readonly DiscordPathGetter getter;
 
         public Watchdog(DiscordPathGetter getter)
         {
@@ -26,7 +22,7 @@ namespace DiscordWatchdog
             if (!Enabled) return;
 
             // Get the target process
-            Process[] processes = GetDiscordProcessses();
+            Process[] processes = GetDiscordProcesses();
             if (processes.Length > 0)
             {
                 wasDiscordOpen = true;
@@ -38,21 +34,25 @@ namespace DiscordWatchdog
                 return;
             }
 
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = getter.GetDiscordExecutablePath();
-            startInfo.Arguments = "--processStart Discord.exe";
-            startInfo.WorkingDirectory = getter.GetDiscordWorkingDirectory();
-            startInfo.RedirectStandardOutput = true;
-            startInfo.RedirectStandardError = true;
-            Process process = Process.Start(startInfo);
+            ProcessStartInfo startInfo = new()
+            {
+                FileName = getter.GetDiscordExecutablePath(),
+                Arguments = "--processStart Discord.exe",
+                WorkingDirectory = getter.GetDiscordWorkingDirectory(),
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+            Process? process = Process.Start(startInfo);
+
+            if (process == null) return;
 
             process.WaitForExit();
             Console.WriteLine(process.StandardOutput.ReadToEnd());
             Console.WriteLine(process.StandardError.ReadToEnd());
-            
+
         }
 
-        private Process[] GetDiscordProcessses()
+        private static Process[] GetDiscordProcesses()
         {
             return Process.GetProcessesByName("Discord");
         }

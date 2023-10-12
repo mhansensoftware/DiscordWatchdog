@@ -16,7 +16,7 @@ namespace DiscordWatchdog
         {
             return Path.Combine(GetDiscordDirectory(), "Update.exe");
         }
-        
+
         public string GetDiscordWorkingDirectory()
         {
             string dir = Directory.GetDirectories(discordDir, "app*").First();

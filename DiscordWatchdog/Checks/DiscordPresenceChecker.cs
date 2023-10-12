@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DiscordWatchdog.Checks
 {
-    internal static class DiscordPresenseChecker
+    internal static class DiscordPresenceChecker
     {
         public static void Check(DiscordPathGetter getter)
         {
