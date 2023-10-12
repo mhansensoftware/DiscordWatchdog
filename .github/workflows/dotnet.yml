@@ -5,9 +5,9 @@ name: .NET
 
 on:
   push:
-    branches: [ "CICD" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "CICD" ]
+    branches: [ "master" ]
 
 jobs:
   build-windows:
